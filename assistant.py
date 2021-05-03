@@ -89,12 +89,9 @@ if __name__=='__main__':
             #print(songs)
             os.startfile(os.path.join(music_dir,songs[m]))
 
-        elif "play my favourite video" in query:
-            webbrowser.open("https://www.youtube.com/watch?v=Fckxobna9bk")
-
         elif "quit" in query:
             speak("quitting")
-            speak("chaltu huuu bro")
+            
 
 
         else:
