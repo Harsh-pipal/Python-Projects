@@ -4,11 +4,13 @@ import webbrowser
 import datetime
 import random
 import os
+import smtplib
 import speech_recognition as sr
 engine=pyttsx3.init('sapi5')
 voices=engine.getProperty('voices')
 #print(voices[1].id)
 engine.setProperty('voice',voices[0].id)
+
 def speak(audio):
     engine.say(audio)
     engine.runAndWait()
@@ -53,7 +55,35 @@ if __name__=='__main__':
     while(True):
         query=takeCommand().lower()
 
-        if "search" in query:
+
+        if "send mail" in query or "send email" in query:
+            smtp_object = smtplib.SMTP('smtp.gmail.com',587)
+            smtp_object.ehlo()
+            smtp_object.starttls()
+
+            speak("To whom should i send the mail")            # whom to send
+            tospacesmail=takeCommand().lower()
+            toemail=""
+            for i in range(0,len(tospacesmail),2):
+                toemail+=tospacesmail[i]
+            toemail+="@gmail.com"
+            password = "create_using_app_passwords_google"
+            myemail = "example@gmail.com"
+            smtp_object.login(myemail,password)
+
+            speak("What's the subject sir")                     #subject of the mail
+            subject = takeCommand().lower()
+
+            speak("What's in the body sir")                     #body of the mail
+            message = takeCommand().lower()
+
+            final_msg = "Subject: "+subject + '\n' + message    #final message looks like
+            smtp_object.sendmail(myemail,toemail,final_msg)
+            
+            smtp_object.quit()
+            speak("Mail sent")
+
+        elif "search" in query:
             speak("searching wikipedia...")
             query=query.replace("wikipedia", "")
             results=wikipedia.summary(query,sentences=2)
@@ -76,6 +106,9 @@ if __name__=='__main__':
         elif "what's the time" in query or 'say time' in query:
 
             strTime=datetime.datetime.now().strftime("%H:%M:%S")
+            print(strTime)
+            # if(strTime[0]=='0' and strTime[1]=='0'):
+            #     speak(f"Twelve hours")
             speak(f"Sir, the time is {strTime} ") 
 
         elif "open VScode" in query or 'open code' in query:
@@ -89,10 +122,9 @@ if __name__=='__main__':
             #print(songs)
             os.startfile(os.path.join(music_dir,songs[m]))
 
-        elif "quit" in query:
+        elif "quit" in query or "Sleep" in query:
             speak("quitting")
-            
-
+            exit()
 
         else:
             print("Thanks for using")
